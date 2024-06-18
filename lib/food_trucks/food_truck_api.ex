@@ -1,7 +1,5 @@
 defmodule FoodTrucks.FoodTruckAPI do
   def fetch_data do
-    IO.puts("FETCHING API")
-
     case HTTPoison.get("https://data.sfgov.org/resource/rqzj-sfat.json") do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         Jason.decode(body)
