@@ -1,30 +1,42 @@
 defmodule FoodTrucksWeb.FoodTrucksLive do
   use Phoenix.LiveView
+  alias FoodTrucks.FoodTruckAPI
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :food_trucks, load_food_trucks(""), :filter, "")}
-  end
-
-  @impl true
-  def handle_event("filter", %{"query" => query}, socket) do
-    {:noreply, assign(socket, :food_trucks, load_food_trucks(query), :filter, query)}
-  end
-
-  defp load_food_trucks(query) do
-    FoodTrucks.FoodTruckAPI.fetch_data()
-    |> case do
+    case FoodTruckAPI.fetch_data() do
       {:ok, food_trucks} ->
-        filter_food_trucks(food_trucks, query)
+        socket = assign(socket, original_food_trucks: food_trucks, food_trucks: food_trucks, filter: "")
+        socket = put_root_layout(socket, {FoodTrucksWeb.LayoutView, "app.html"})
+        {:ok, socket}
 
-      {:error, _} ->
-        []
+      {:error, _reason} ->
+        socket = assign(socket, original_food_trucks: [], food_trucks: [], filter: "")
+        socket = put_root_layout(socket, {FoodTrucksWeb.LayoutView, "app.html"})
+        {:ok, socket}
     end
   end
 
-  defp filter_food_trucks(food_trucks, query) do
-    Enum.filter(food_trucks, fn truck ->
-      String.contains?(truck["fooditems"], query)
-    end)
+  @impl true
+  def handle_event("filter", %{"value" => query}, socket) do
+    filtered_trucks = apply_filter(socket.assigns.original_food_trucks, query)
+
+    socket =
+      socket
+      |> assign(:food_trucks, filtered_trucks)
+      |> assign(:filter, query)
+
+    {:noreply, socket}
+  end
+
+  defp apply_filter(food_trucks, query) do
+    if query == "" do
+      food_trucks
+    else
+      Enum.filter(food_trucks, fn truck ->
+        fooditems = Map.get(truck, "fooditems", "")
+        String.contains?(String.downcase(fooditems), String.downcase(query))
+      end)
+    end
   end
 end
