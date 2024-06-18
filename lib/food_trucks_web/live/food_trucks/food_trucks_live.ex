@@ -6,14 +6,11 @@ defmodule FoodTrucksWeb.FoodTrucksLive do
   def mount(_params, _session, socket) do
     case FoodTruckAPI.fetch_data() do
       {:ok, food_trucks} ->
-        socket = assign(socket, original_food_trucks: food_trucks, food_trucks: food_trucks, filter: "")
-        socket = put_root_layout(socket, {FoodTrucksWeb.LayoutView, "app.html"})
-        {:ok, socket}
+        {:ok,
+         assign(socket, original_food_trucks: food_trucks, food_trucks: food_trucks, filter: "")}
 
       {:error, _reason} ->
-        socket = assign(socket, original_food_trucks: [], food_trucks: [], filter: "")
-        socket = put_root_layout(socket, {FoodTrucksWeb.LayoutView, "app.html"})
-        {:ok, socket}
+        {:ok, assign(socket, original_food_trucks: [], food_trucks: [], filter: "")}
     end
   end
 
