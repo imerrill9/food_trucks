@@ -17,7 +17,7 @@ defmodule FoodTrucksWeb.Router do
   scope "/", FoodTrucksWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/", FoodTrucksController, :index
   end
 
   # Other scopes may use custom stacks.

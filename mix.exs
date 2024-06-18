@@ -32,6 +32,8 @@ defmodule FoodTrucks.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # data.sfgov.org wrapper
+      {:httpoison, "~> 2.2.1"},
       {:phoenix, "~> 1.7.12"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
