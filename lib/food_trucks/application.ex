@@ -9,7 +9,7 @@ defmodule FoodTrucks.Application do
   def start(_type, _args) do
     children = [
       FoodTrucksWeb.Telemetry,
-      FoodTrucks.Repo,
+      # FoodTrucks.Repo, #TODO: add back in when database connection is needed
       {DNSCluster, query: Application.get_env(:food_trucks, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: FoodTrucks.PubSub},
       # Start the Finch HTTP client for sending emails
